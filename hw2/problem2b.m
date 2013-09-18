@@ -7,6 +7,7 @@ scatter( A( 1:300, 1 ), A( 1:300, 2 ), 'red.' );
 scatter( A( 301:600, 1 ), A( 301:600, 2 ), 'blue*' );
 hold off;
 
+% Compute the kernel PCA to differentiate nonlinear dataset
 n = size( A, 1 );
 varA = var( A );
 
@@ -27,6 +28,25 @@ hold on;
 
 hist( proj1 );
 hist( proj2 );
+
+h = findobj(gca,'Type','patch');
+
+set(h(1),'FaceColor','r','EdgeColor','r');
+set(h(2),'FaceColor','b','EdgeColor','b');
+
+hold off;
+
+% Compute the linear PCA to compare
+[Vl,Dl] = eigs( cov( A ), 1 );
+
+projL1 = A( 1:300, : ) * Vl;
+projL2 = A( 301:600, : ) * Vl;
+
+figure;
+hold on;
+
+hist( projL1, 100 );
+hist( projL2, 100 );
 
 h = findobj(gca,'Type','patch');
 
