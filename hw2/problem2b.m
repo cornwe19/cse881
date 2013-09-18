@@ -10,7 +10,8 @@ hold off;
 n = size( A, 1 );
 varA = var( A );
 
-rbf = @( xi, xj ) exp( -1 * ( bsxfun( @minus, xi, xj ).^2 ) / ( 2 * varA ) );
+% Use RBF distance function with variance computed on the euclidean distance between points
+rbf = @( xi, xj ) exp( -( 1 / 2 * var( pdist2( xi, xj, 'euclidean' ) ) ) *  pdist2( xi, xj, 'euclidean' ).^2 );
 
 D = pdist( A, rbf );
 Z = squareform( D );
@@ -18,13 +19,14 @@ Znorm = Z ./ n;
 
 [V,D] = eigs( Znorm, 1 );
 
-proj1 = A( 1:300, : )' * Znorm( 1:300, : );
-proj2 = A( 301:600, : )' * Znorm( 301:600, : );
+proj1 = A( 1:300, : )' * V( 1:300, : );
+proj2 = A( 301:600, : )' * V( 301:600, : );
 
 figure;
 hold on;
-hist( proj1', 300 );
-hist( proj2', 300 );
+
+hist( proj1 );
+hist( proj2 );
 
 h = findobj(gca,'Type','patch');
 
