@@ -6,7 +6,6 @@ trainYCenter = trainY - mean( trainY );
 
 lambda = 10000;
 
-%b = ridge( trainY, trainXSparse, k );
 b = inv( trainXSparse'*trainXSparse + lambda*eye(size(trainXSparse,2)) ) * trainXSparse' * trainYCenter;
 
 testX = load( 'data/testX.data' );
