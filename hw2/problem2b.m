@@ -1,6 +1,6 @@
 disp( 'Loading data into matrix A...' );
 A = load( 'data/2d_nonlinear.txt' );
-
+ 
 figure;
 hold on;
 scatter( A( 1:300, 1 ), A( 1:300, 2 ), 'red.' );
