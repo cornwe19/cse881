@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class DataMerge {
-   private static HashMap<Integer,TrainRecord> sTrainingData = new HashMap<Integer, TrainRecord>(); 
+   private static HashMap<Integer, String> sTrainingData = new HashMap<Integer, String>(); 
    
    public static void main( String[] argv ) throws IOException {
       if ( argv.length < 3 ) {
@@ -25,7 +25,7 @@ public class DataMerge {
       while ( line != null ) {
          Scanner scanner = new Scanner( line );
          
-         sTrainingData.put( scanner.nextInt(), new TrainRecord( scanner.nextInt(), scanner.nextInt() ) );
+         sTrainingData.put( scanner.nextInt(), scanner.nextLine() );
          
          line = trainReader.readLine();
          
@@ -50,9 +50,9 @@ public class DataMerge {
       while( line != null ) {
          Scanner scanner = new Scanner( line );
          
-         TrainRecord rec = sTrainingData.get( scanner.nextInt() );
+         String rec = sTrainingData.get( scanner.nextInt() );
          if ( rec != null ) {
-            writer.write( String.format( "%s\t%d\t%d\n", line, rec.iid, rec.result ) );
+            writer.write( String.format( "%s%s\n", line, rec ) );
             saved++;
          }
          
@@ -66,15 +66,5 @@ public class DataMerge {
       
       profileReader.close();
       writer.close();
-   }
-   
-   private static class TrainRecord {
-      public final int iid;
-      public final int result;
-      
-      public TrainRecord( int iid, int result ) {
-         this.iid = iid;
-         this.result = result;
-      }
    }
 }
