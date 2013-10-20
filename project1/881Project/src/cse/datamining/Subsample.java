@@ -19,11 +19,19 @@ public class Subsample {
       int                 numSamples = Integer.parseInt( argv[1] );
       
       System.out.printf( "Subsampling %d lines from '%s' -> '%s'\n", numSamples, argv[0], argv[2] );
-      for ( int i = 0; i < numSamples; i++ ) {
-         writer.write( grabber.nextRandomRecord() );
-         writer.append( "\n" );
+      int samples = 0;
+      while( samples < numSamples ) {
+         for ( String sample : grabber.getRandomRecords() ) {
+            writer.write( sample );
+            writer.append( "\n" );
+            
+            samples++;
+            if ( samples == numSamples ) {
+               break;
+            }
+         }
          
-         System.out.printf( "\r%d samples processed", i );
+         System.out.printf( "\r%d samples processed", samples );
       }
       
       System.out.println( "Done" );
