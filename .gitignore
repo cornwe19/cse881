@@ -2,3 +2,4 @@
 *.prefs
 
 data/
+*.arff
