@@ -5,8 +5,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class DataMerge {
    private static HashMap<Integer, ArrayList<String>> sTrainingData = new HashMap<Integer, ArrayList<String>>(); 
@@ -21,6 +24,46 @@ public class DataMerge {
       FileWriter       writer = new FileWriter( argv[2] );
       String inline = trainReader.readLine();
       int lines = 0; 
+      
+      for ( int i = 0; i < 103; i++ ) {
+         if ( i < 100 ) {
+            writer.write( String.format( "%d\t", i ) );
+         } else {
+            switch ( i ) {
+            case 100:
+               writer.write( "ITEM\t" );
+               break;
+            case 101:
+               writer.write( "RESULT\t" );
+               break;
+            case 102:
+               writer.write( "TIMESTAMP\n" );
+               break;
+            }
+         }
+      }
+      
+      BufferedReader keyReader = new BufferedReader( new FileReader( "data/topKeywords.txt" ) );
+      List<String> keywords = Arrays.asList( keyReader.readLine().split( "\t" ) );
+      keyReader.close();
+      
+      HashMap<String,Integer[]> items = new HashMap<String,Integer[]>();
+      BufferedReader itemReader = new BufferedReader( new FileReader( "data/item_keyword_map.txt" ) );
+      String item = itemReader.readLine();
+      while( item != null ) {
+         Scanner itemScan = new Scanner( item );
+         
+         String id = itemScan.next();
+         
+         Integer[] ints = new Integer[100];
+         for ( int i = 0; i < 100; i++ ) {
+            ints[i] = itemScan.nextInt();
+         }
+         
+         items.put( id, ints );
+         item = itemReader.readLine();
+      }
+      itemReader.close();
       
       System.out.printf( "Scanning '%s'\n", argv[0] );
       while ( inline != null ) {         
@@ -63,9 +106,30 @@ public class DataMerge {
             Scanner scanner = new Scanner( mline );
             
             ArrayList<String> recs = sTrainingData.get( scanner.nextInt() );
+            
             if ( recs != null ) {
+               
+               float[] weights = new float[100]; 
+               StringTokenizer tok = new StringTokenizer( scanner.next(), ":;" );
+               while ( tok.hasMoreTokens() ) {
+                  int place = keywords.indexOf( tok.nextToken() );
+                  if ( place >= 0 ) {
+                     weights[place] = Float.parseFloat( tok.nextToken() );
+                  }
+               }
+               
                for ( String rec : recs ) {
-                  writer.write( String.format( "%s%s\n", mline, rec ) );
+                  StringTokenizer recTok = new StringTokenizer( rec );
+                  Integer[] itemKeys = items.get( recTok.nextToken() );
+                  for ( int i = 0; i < 100; i++ ) {
+                     writer.write( Float.toString( weights[i] * itemKeys[i] ) );
+                     
+                     if ( i < 99 ) { // Skip trailing tab
+                        writer.append( '\t' );
+                     }
+                  }
+                  
+                  writer.write( String.format( "%s\n", rec ) );
                   saved++;
                }
             }

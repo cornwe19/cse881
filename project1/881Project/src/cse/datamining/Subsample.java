@@ -34,7 +34,7 @@ public class Subsample {
          System.out.printf( "\r%d samples processed", samples );
       }
       
-      System.out.println( "Done" );
+      System.out.println( "\nDone" );
       
       writer.close();
       file.close();
