@@ -14,6 +14,9 @@ testY = load( 'data/testY.data' );
 testXSparse = spconvert( testX );
 testYCenter = testY - mean( trainY );
 
+disp( 'Correlation between projected data and actual results' );
+corr( testXSparse * b, testYCenter )
+
 disp( 'First 10 projections of test data' );
 testXSparse( 1:10, : ) * b
 
